@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Duetti Monitor - Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Cores SaaS Dark Mode */
+            --bg-base: #09090b;      
+            --bg-surface: #18181b;   
+            --bg-hover: #27272a;     
+            --border: #27272a;       
+            
+            --text-main: #f4f4f5;    
+            --text-muted: #a1a1aa;   
+            
+            --brand-primary: #f97316; /* Laranja Whop/Duetti */
+            --brand-hover: #ea580c;
+            
+            --success-text: #10b981;
+            --success-bg: rgba(16, 185, 129, 0.1);
+            --error-text: #ef4444;
+            --error-bg: rgba(239, 68, 68, 0.1);
+            
+            --radius-md: 8px;
+            --radius-lg: 12px;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* --- BARRA DE CARREGAMENTO (TOP PROGRESS BAR) --- */
+        .loading-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--brand-primary), #f97316, #ffedd5);
+            width: 0%;
+            opacity: 0;
+            z-index: 9999;
+            transition: width 0.4s ease, opacity 0.3s ease;
+            box-shadow: 0 0 10px rgba(249, 115, 22, 0.5);
+        }
+
+        /* --- SIDEBAR --- */
+        .sidebar {
+            width: 260px;
+            background-color: var(--bg-surface);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            padding: 24px;
+            z-index: 10;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 40px;
+            color: var(--text-main);
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--brand-primary), var(--brand-hover));
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+        }
+
+        .nav-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .nav-item {
+            padding: 10px 16px;
+            border-radius: var(--radius-md);
+            color: var(--text-muted);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .nav-item.active {
+            background-color: var(--bg-hover);
+            color: var(--text-main);
+        }
+
+        .nav-item:hover:not(.active) {
+            background-color: rgba(39, 39, 42, 0.5);
+            color: var(--text-main);
+        }
+
+        /* --- MAIN CONTENT (COM ANIMAÇÃO DE FADE) --- */
+        .main-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 40px 48px;
+            opacity: 0; /* Começa invisível para o efeito de loading */
+            transition: opacity 0.5s ease;
+        }
+
+        .main-content.loaded {
+            opacity: 1; /* Mostra o conteúdo suavemente após o loading */
+        }
+
+        .header {
+            margin-bottom: 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .header h1 {
+            font-size: 1.875rem;
+            font-weight: 700;
+            letter-spacing: -0.025em;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        /* --- STATS GRID --- */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background-color: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .stat-title {
+            color: var(--text-muted);
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        /* --- CATEGORIAS & CARDS --- */
+        .category-section {
+            margin-bottom: 48px;
+        }
+
+        .category-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .category-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .badge {
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 6px 12px;
+            border-radius: 9999px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .badge.success {
+            background-color: var(--success-bg);
+            color: var(--success-text);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        .badge.error {
+            background-color: var(--error-bg);
+            color: var(--error-text);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 20px;
+        }
+
+        .music-card {
+            background-color: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 120px;
+        }
+
+        .music-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background-color: var(--brand-primary);
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .music-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-md);
+            border-color: rgba(249, 115, 22, 0.3);
+        }
+
+        .music-card:hover::before {
+            opacity: 1;
+        }
+
+        .music-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 16px;
+            line-height: 1.4;
+            color: var(--text-main);
+        }
+
+        .music-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px dashed var(--border);
+            padding-top: 16px;
+        }
+
+        .cpm-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .cpm-value {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--success-text);
+        }
+
+        .empty-state {
+            background-color: var(--bg-surface);
+            border: 1px dashed var(--border);
+            border-radius: var(--radius-lg);
+            padding: 40px;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-base); }
+        ::-webkit-scrollbar-thumb { background: var(--bg-hover); border-radius: 4px; }
+    </style>
+</head>
+<body>
+
+    <div id="top-loading-bar" class="loading-bar"></div>
+
+    <aside class="sidebar">
+        <div class="logo">
+            <div class="logo-icon">🎵</div>
+            Duetti App
+        </div>
+        <nav class="nav-menu">
+            <div class="nav-item active">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                Dashboard
+            </div>
+            <div class="nav-item" onclick="triggerFetchAnimation()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2v6h-6"></path><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v6h6"></path></svg>
+                Recarregar Dados
+            </div>
+        </nav>
+    </aside>
+
+    <main class="main-content" id="main-content">
+        <header class="header">
+            <div>
+                <h1>Campanhas Ativas</h1>
+                <p>Monitorização em tempo real das tuas categorias Duetti.</p>
+            </div>
+        </header>
+
+        <div class="stats-grid" id="stats-container">
+            </div>
+
+        <div id="dashboard-content">
+            </div>
+    </main>
+
+    <script src="data.js"></script>
+    
+    <script>
+        const dashboard = document.getElementById('dashboard-content');
+        const statsContainer = document.getElementById('stats-container');
+        const mainContent = document.getElementById('main-content');
+        const loadingBar = document.getElementById('top-loading-bar');
+
+        // Função que simula o carregamento da API (SaaS style)
+        function triggerFetchAnimation() {
+            // Esconde o conteúdo e reseta a barra
+            mainContent.classList.remove('loaded');
+            loadingBar.style.opacity = '1';
+            loadingBar.style.width = '0%';
+
+            // Passos da animação da barra
+            setTimeout(() => { loadingBar.style.width = '35%'; }, 100);
+            setTimeout(() => { loadingBar.style.width = '75%'; }, 400);
+            
+            setTimeout(() => { 
+                loadingBar.style.width = '100%';
+                setTimeout(() => {
+                    loadingBar.style.opacity = '0';
+                    // Renderiza os dados e mostra o painel
+                    loadDashboardData();
+                    mainContent.classList.add('loaded');
+                }, 250);
+            }, 750);
+        }
+
+        // Função principal de processamento dos dados do data.js
+        function loadDashboardData() {
+            if (typeof scrapingData === 'undefined') {
+                dashboard.innerHTML = `
+                    <div class="empty-state" style="border-color: var(--error-bg);">
+                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--error-text)" stroke-width="2" style="margin-bottom:16px;">
+                            <circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line>
+                        </svg>
+                        <h3 style="color: var(--error-text); margin-bottom:8px;">Ficheiro data.js não encontrado!</h3>
+                        <p>Executa o script Python primeiro para gerar os dados.</p>
+                    </div>`;
+                return;
+            }
+
+            let totalCampaigns = 0;
+            let activeCategories = 0;
+            let htmlContent = '';
+
+            scrapingData.forEach(categoria => {
+                const hasCampaigns = categoria.musicas && categoria.musicas.length > 0;
+                
+                if (hasCampaigns) {
+                    totalCampaigns += categoria.musicas.length;
+                    activeCategories++;
+                }
+
+                const isSuccess = categoria.status.includes('✅');
+                const statusClass = isSuccess ? 'success' : 'error';
+                const statusIcon = isSuccess 
+                    ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg>'
+                    : '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>';
+                
+                htmlContent += `
+                    <div class="category-section">
+                        <div class="category-header">
+                            <h2 class="category-title">${categoria.aba}</h2>
+                            <span class="badge ${statusClass}">
+                                ${statusIcon}
+                                ${categoria.status.replace('✅', '').replace('❌', '').trim()}
+                            </span>
+                        </div>
+                `;
+
+                if (hasCampaigns) {
+                    htmlContent += `<div class="cards-grid">`;
+                    categoria.musicas.forEach(musica => {
+                        htmlContent += `
+                            <div class="music-card">
+                                <div class="music-title">${musica.musica}</div>
+                                <div class="music-footer">
+                                    <span class="cpm-label">Reward / CPM</span>
+                                    <span class="cpm-value">${musica.valor}</span>
+                                </div>
+                            </div>
+                        `;
+                    });
+                    htmlContent += `</div>`;
+                } else {
+                    htmlContent += `
+                        <div class="empty-state">
+                            Sem campanhas ativas para esta categoria de momento. O robô continua a monitorizar.
+                        </div>`;
+                }
+
+                htmlContent += `</div>`;
+            });
+
+            dashboard.innerHTML = htmlContent;
+
+            // Atualiza as caixas de KPI com a hora exata da simulação
+            statsContainer.innerHTML = `
+                <div class="stat-card">
+                    <div class="stat-title">Total de Campanhas</div>
+                    <div class="stat-value" style="color: var(--brand-primary);">${totalCampaigns}</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-title">Categorias Ativas</div>
+                    <div class="stat-value">${activeCategories} <span style="font-size:1rem; color:var(--text-muted); font-weight:normal;">/ ${scrapingData.length}</span></div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-title">Sincronizado via Vercel</div>
+                    <div class="stat-value" style="font-size: 1.4rem; margin-top:8px; color: var(--success-text)">${new Date().toLocaleTimeString('pt-PT', {hour: '2-digit', minute:'2-digit', second:'2-digit'})}</div>
+                </div>
+            `;
+        }
+
+        // Inicia automaticamente o efeito assim que abres a página
+        window.addEventListener('DOMContentLoaded', triggerFetchAnimation);
+    </script>
+</body>
+</html>
