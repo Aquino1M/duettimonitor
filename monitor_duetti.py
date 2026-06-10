@@ -11,11 +11,11 @@ URLS = [
 ]
 
 def verificar_musicas():
-    print("A iniciar o robô de monitorização (Visível)... Aguarda.")
+    print("A iniciar o robô de monitorização... Aguarda.")
     resultados = []
     
     with sync_playwright() as p:
-        browser = p.chromium.launch(headless=True) # HEADLESS=TRUE PARA O GITHUB ACTIONS!
+        browser = p.chromium.launch(headless=True) # True para o GitHub Actions
         try:
             context = browser.new_context(storage_state="auth.json")
         except Exception:
@@ -54,11 +54,11 @@ def verificar_musicas():
                         musica = "Desconhecida"
                         valor = "Desconhecido"
                         
-                        for i, Server_linha in enumerate(linhas):
-                            if "1k views" in Server_linha or "$" in Server_linha:
-                                valor = Server_linha
-                            if "Duetti" in Server_linha and i > 0:
-                                musica = lines[i-1] if 'lines' in locals() else linhas[i-1]
+                        for i, linha in enumerate(linhas):
+                            if "1k views" in linha or "$" in linha:
+                                valor = linha
+                            if "Duetti" in linha and i > 0:
+                                musica = linhas[i-1] # Corrigido aqui!
                                 
                         if musica != "Desconhecida" and not any(m['musica'] == musica for m in musicas_detalhadas):
                             musicas_detalhadas.append({
@@ -73,7 +73,7 @@ def verificar_musicas():
                 print(f"  -> Erro ao ler {nome_aba}: {e}")
                 status = "⚠️ Erro na leitura"
                 
-            # AGORA SALVA O LINK TAMBÉM!
+            # Salva a URL da categoria junto com os dados
             resultados.append({
                 "aba": nome_aba,
                 "url": url,
@@ -88,7 +88,7 @@ def verificar_musicas():
         f.write(js_content)
         
     print("\n==========================================")
-    print("CONCLUÍDO! O ficheiro data.js foi atualizado.")
+    print("CONCLUÍDO! O ficheiro data.js foi atualizado com as URLs.")
     print("==========================================")
 
 if __name__ == "__main__":
