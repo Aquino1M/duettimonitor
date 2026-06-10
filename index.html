@@ -7,7 +7,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            /* Cores SaaS Dark Mode */
             --bg-base: #09090b;      
             --bg-surface: #18181b;   
             --bg-hover: #27272a;     
@@ -16,7 +15,7 @@
             --text-main: #f4f4f5;    
             --text-muted: #a1a1aa;   
             
-            --brand-primary: #f97316; /* Laranja Whop/Duetti */
+            --brand-primary: #f97316; 
             --brand-hover: #ea580c;
             
             --success-text: #10b981;
@@ -45,7 +44,6 @@
             overflow: hidden;
         }
 
-        /* --- BARRA DE CARREGAMENTO (TOP PROGRESS BAR) --- */
         .loading-bar {
             position: fixed;
             top: 0;
@@ -59,7 +57,6 @@
             box-shadow: 0 0 10px rgba(249, 115, 22, 0.5);
         }
 
-        /* --- SIDEBAR --- */
         .sidebar {
             width: 260px;
             background-color: var(--bg-surface);
@@ -119,17 +116,16 @@
             color: var(--text-main);
         }
 
-        /* --- MAIN CONTENT (COM ANIMAÇÃO DE FADE) --- */
         .main-content {
             flex: 1;
             overflow-y: auto;
             padding: 40px 48px;
-            opacity: 0; /* Começa invisível para o efeito de loading */
+            opacity: 0; 
             transition: opacity 0.5s ease;
         }
 
         .main-content.loaded {
-            opacity: 1; /* Mostra o conteúdo suavemente após o loading */
+            opacity: 1; 
         }
 
         .header {
@@ -151,7 +147,6 @@
             font-size: 0.95rem;
         }
 
-        /* --- STATS GRID --- */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -182,7 +177,6 @@
             color: var(--text-main);
         }
 
-        /* --- CATEGORIAS & CARDS --- */
         .category-section {
             margin-bottom: 48px;
         }
@@ -225,7 +219,7 @@
 
         .cards-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
             gap: 20px;
         }
 
@@ -240,7 +234,7 @@
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            min-height: 120px;
+            min-height: 140px;
         }
 
         .music-card::before {
@@ -278,20 +272,49 @@
             justify-content: space-between;
             align-items: center;
             border-top: 1px dashed var(--border);
-            padding-top: 16px;
+            padding-top: 14px;
+        }
+
+        .cpm-container {
+            display: flex;
+            flex-direction: column;
         }
 
         .cpm-label {
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             color: var(--text-muted);
             text-transform: uppercase;
             letter-spacing: 0.05em;
         }
 
         .cpm-value {
-            font-size: 1.1rem;
+            font-size: 1.05rem;
             font-weight: 700;
             color: var(--success-text);
+            margin-top: 2px;
+        }
+
+        /* --- ESTILO SAAS DO BOTÃO DE LINK --- */
+        .campaign-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background-color: var(--bg-hover);
+            color: var(--text-main);
+            text-decoration: none;
+            padding: 8px 14px;
+            border-radius: var(--radius-md);
+            font-size: 0.8rem;
+            font-weight: 600;
+            border: 1px solid var(--border);
+            transition: all 0.2s ease;
+        }
+
+        .campaign-btn:hover {
+            background-color: var(--brand-primary);
+            border-color: var(--brand-primary);
+            color: #ffffff;
+            box-shadow: 0 0 10px rgba(249, 115, 22, 0.2);
         }
 
         .empty-state {
@@ -338,11 +361,8 @@
             </div>
         </header>
 
-        <div class="stats-grid" id="stats-container">
-            </div>
-
-        <div id="dashboard-content">
-            </div>
+        <div class="stats-grid" id="stats-container"></div>
+        <div id="dashboard-content"></div>
     </main>
 
     <script src="data.js"></script>
@@ -353,14 +373,11 @@
         const mainContent = document.getElementById('main-content');
         const loadingBar = document.getElementById('top-loading-bar');
 
-        // Função que simula o carregamento da API (SaaS style)
         function triggerFetchAnimation() {
-            // Esconde o conteúdo e reseta a barra
             mainContent.classList.remove('loaded');
             loadingBar.style.opacity = '1';
             loadingBar.style.width = '0%';
 
-            // Passos da animação da barra
             setTimeout(() => { loadingBar.style.width = '35%'; }, 100);
             setTimeout(() => { loadingBar.style.width = '75%'; }, 400);
             
@@ -368,24 +385,15 @@
                 loadingBar.style.width = '100%';
                 setTimeout(() => {
                     loadingBar.style.opacity = '0';
-                    // Renderiza os dados e mostra o painel
                     loadDashboardData();
                     mainContent.classList.add('loaded');
                 }, 250);
             }, 750);
         }
 
-        // Função principal de processamento dos dados do data.js
         function loadDashboardData() {
             if (typeof scrapingData === 'undefined') {
-                dashboard.innerHTML = `
-                    <div class="empty-state" style="border-color: var(--error-bg);">
-                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--error-text)" stroke-width="2" style="margin-bottom:16px;">
-                            <circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line>
-                        </svg>
-                        <h3 style="color: var(--error-text); margin-bottom:8px;">Ficheiro data.js não encontrado!</h3>
-                        <p>Executa o script Python primeiro para gerar os dados.</p>
-                    </div>`;
+                dashboard.innerHTML = `<div class="empty-state">Erro: Executa o script Python primeiro.</div>`;
                 return;
             }
 
@@ -421,22 +429,26 @@
                 if (hasCampaigns) {
                     htmlContent += `<div class="cards-grid">`;
                     categoria.musicas.forEach(musica => {
+                        // ADICIONADO O BOTÃO COM O LINK DA CATEGORIA DA WHOP
                         htmlContent += `
                             <div class="music-card">
                                 <div class="music-title">${musica.musica}</div>
                                 <div class="music-footer">
-                                    <span class="cpm-label">Reward / CPM</span>
-                                    <span class="cpm-value">${musica.valor}</span>
+                                    <div class="cpm-container">
+                                        <span class="cpm-label">Reward / CPM</span>
+                                        <span class="cpm-value">${musica.valor}</span>
+                                    </div>
+                                    <a href="${categoria.url || '#'}" target="_blank" class="campaign-btn">
+                                        Abrir Link
+                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                                    </a>
                                 </div>
                             </div>
                         `;
                     });
                     htmlContent += `</div>`;
                 } else {
-                    htmlContent += `
-                        <div class="empty-state">
-                            Sem campanhas ativas para esta categoria de momento. O robô continua a monitorizar.
-                        </div>`;
+                    htmlContent += `<div class="empty-state">Sem campanhas ativas para esta categoria.</div>`;
                 }
 
                 htmlContent += `</div>`;
@@ -444,7 +456,6 @@
 
             dashboard.innerHTML = htmlContent;
 
-            // Atualiza as caixas de KPI com a hora exata da simulação
             statsContainer.innerHTML = `
                 <div class="stat-card">
                     <div class="stat-title">Total de Campanhas</div>
@@ -461,7 +472,6 @@
             `;
         }
 
-        // Inicia automaticamente o efeito assim que abres a página
         window.addEventListener('DOMContentLoaded', triggerFetchAnimation);
     </script>
 </body>
