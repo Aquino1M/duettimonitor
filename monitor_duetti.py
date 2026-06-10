@@ -15,7 +15,7 @@ def verificar_musicas():
     resultados = []
     
     with sync_playwright() as p:
-        browser = p.chromium.launch(headless=True) # True para o GitHub Actions
+        browser = p.chromium.launch(headless=True) # Corre em background (leve e rápido)
         try:
             context = browser.new_context(storage_state="auth.json")
         except Exception:
@@ -58,7 +58,7 @@ def verificar_musicas():
                             if "1k views" in linha or "$" in linha:
                                 valor = linha
                             if "Duetti" in linha and i > 0:
-                                musica = linhas[i-1] # Corrigido aqui!
+                                musica = linhas[i-1]
                                 
                         if musica != "Desconhecida" and not any(m['musica'] == musica for m in musicas_detalhadas):
                             musicas_detalhadas.append({
@@ -73,7 +73,7 @@ def verificar_musicas():
                 print(f"  -> Erro ao ler {nome_aba}: {e}")
                 status = "⚠️ Erro na leitura"
                 
-            # Salva a URL da categoria junto com os dados
+            # Garante que a URL vai junta com os dados
             resultados.append({
                 "aba": nome_aba,
                 "url": url,
