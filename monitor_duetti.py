@@ -15,7 +15,7 @@ def verificar_musicas():
     resultados = []
     
     with sync_playwright() as p:
-        browser = p.chromium.launch(headless=False) 
+        browser = p.chromium.launch(headless=True) # HEADLESS=TRUE PARA O GITHUB ACTIONS!
         try:
             context = browser.new_context(storage_state="auth.json")
         except Exception:
@@ -33,12 +33,10 @@ def verificar_musicas():
             
             try:
                 page.goto(url)
-                page.wait_for_timeout(8000) # Espera carregar
+                page.wait_for_timeout(8000) 
                 
-                # Procura por cards que tenham "Paid Out"
                 cards = page.locator("div:has-text('Paid Out')").all()
                 
-                # Se não encontrar, tenta dentro de iframes
                 if len(cards) == 0:
                     for frame in page.frames:
                         cards_in_frame = frame.locator("div:has-text('Paid Out')").all()
@@ -56,12 +54,11 @@ def verificar_musicas():
                         musica = "Desconhecida"
                         valor = "Desconhecido"
                         
-                        # Procura inteligente nas linhas do card
-                        for i, linha in enumerate(linhas):
-                            if "1k views" in linha or "$" in linha:
-                                valor = linha # Guarda o valor do CPM
-                            if "Duetti" in linha and i > 0:
-                                musica = linhas[i-1] # A música está sempre antes da palavra 'Duetti'
+                        for i, Server_linha in enumerate(linhas):
+                            if "1k views" in Server_linha or "$" in Server_linha:
+                                valor = Server_linha
+                            if "Duetti" in Server_linha and i > 0:
+                                musica = lines[i-1] if 'lines' in locals() else linhas[i-1]
                                 
                         if musica != "Desconhecida" and not any(m['musica'] == musica for m in musicas_detalhadas):
                             musicas_detalhadas.append({
@@ -76,22 +73,22 @@ def verificar_musicas():
                 print(f"  -> Erro ao ler {nome_aba}: {e}")
                 status = "⚠️ Erro na leitura"
                 
+            # AGORA SALVA O LINK TAMBÉM!
             resultados.append({
                 "aba": nome_aba,
+                "url": url,
                 "status": status,
                 "musicas": musicas_detalhadas
             })
 
         browser.close()
         
-    # Guarda os dados num ficheiro JS para o site conseguir ler
     js_content = f"const scrapingData = {json.dumps(resultados, ensure_ascii=False, indent=2)};"
     with open("data.js", "w", encoding="utf-8") as f:
         f.write(js_content)
         
     print("\n==========================================")
     print("CONCLUÍDO! O ficheiro data.js foi atualizado.")
-    print("Abre o ficheiro index.html para ver o Painel!")
     print("==========================================")
 
 if __name__ == "__main__":
