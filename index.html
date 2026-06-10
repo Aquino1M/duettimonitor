@@ -26,7 +26,15 @@
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Inter', sans-serif; background-color: var(--bg-base); color: var(--text-main); display: flex; height: 100vh; overflow: hidden; }
+        
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: var(--bg-base); 
+            color: var(--text-main); 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+        }
 
         .loading-bar {
             position: fixed; top: 0; left: 0; height: 3px;
@@ -36,20 +44,32 @@
             box-shadow: 0 0 10px rgba(249, 115, 22, 0.5);
         }
 
-        .sidebar { width: 260px; background-color: var(--bg-surface); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 24px; z-index: 10; }
+        /* SIDEBAR - Padrão Computador */
+        .sidebar { 
+            width: 260px; 
+            background-color: var(--bg-surface); 
+            border-right: 1px solid var(--border); 
+            display: flex; 
+            flex-direction: column; 
+            padding: 24px; 
+            z-index: 10; 
+            flex-shrink: 0;
+        }
         .logo { display: flex; align-items: center; gap: 12px; font-size: 1.25rem; font-weight: 700; margin-bottom: 40px; color: var(--text-main); }
         .logo-icon { width: 32px; height: 32px; background: linear-gradient(135deg, var(--brand-primary), var(--brand-hover)); border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; font-size: 1.1rem; }
         .nav-menu { display: flex; flex-direction: column; gap: 8px; }
-        .nav-item { padding: 10px 16px; border-radius: var(--radius-md); color: var(--text-muted); font-weight: 500; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 12px; }
+        .nav-item { padding: 10px 16px; border-radius: var(--radius-md); color: var(--text-muted); font-weight: 500; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 12px; font-size: 0.95rem; }
         .nav-item.active { background-color: var(--bg-hover); color: var(--text-main); }
         .nav-item:hover:not(.active) { background-color: rgba(39, 39, 42, 0.5); color: var(--text-main); }
 
+        /* CONTEÚDO PRINCIPAL - Padrão Computador */
         .main-content { flex: 1; overflow-y: auto; padding: 40px 48px; opacity: 0; transition: opacity 0.5s ease; }
         .main-content.loaded { opacity: 1; }
         .header { margin-bottom: 40px; }
         .header h1 { font-size: 1.875rem; font-weight: 700; letter-spacing: -0.025em; margin-bottom: 8px; }
         .header p { color: var(--text-muted); font-size: 0.95rem; }
 
+        /* GRELHAS - Padrão Computador */
         .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 24px; margin-bottom: 40px; }
         .stat-card { background-color: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 24px; box-shadow: var(--shadow-sm); }
         .stat-title { color: var(--text-muted); font-size: 0.875rem; font-weight: 500; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.05em; }
@@ -63,14 +83,14 @@
         .badge.success { background-color: var(--success-bg); color: var(--success-text); border: 1px solid rgba(16, 185, 129, 0.2); }
         .badge.error { background-color: var(--error-bg); color: var(--error-text); border: 1px solid rgba(239, 68, 68, 0.2); }
 
-        .cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 20px; }
+        .cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; }
         .music-card { background-color: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 20px; transition: all 0.2s ease; position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; min-height: 140px; }
         .music-card::before { content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%; background-color: var(--brand-primary); opacity: 0; transition: opacity 0.2s; }
         .music-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); border-color: rgba(249, 115, 22, 0.3); }
         .music-card:hover::before { opacity: 1; }
         .music-title { font-size: 1rem; font-weight: 600; margin-bottom: 16px; line-height: 1.4; color: var(--text-main); }
 
-        .music-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px dashed var(--border); padding-top: 14px; }
+        .music-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px dashed var(--border); padding-top: 14px; gap: 10px; }
         .cpm-container { display: flex; flex-direction: column; }
         .cpm-label { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
         .cpm-value { font-size: 1.05rem; font-weight: 700; color: var(--success-text); margin-top: 2px; }
@@ -78,14 +98,79 @@
         .campaign-btn {
             display: inline-flex; align-items: center; gap: 6px; background-color: var(--bg-hover); color: var(--text-main);
             text-decoration: none; padding: 8px 14px; border-radius: var(--radius-md); font-size: 0.8rem; font-weight: 600;
-            border: 1px solid var(--border); transition: all 0.2s ease;
+            border: 1px solid var(--border); transition: all 0.2s ease; cursor: pointer; white-space: nowrap;
         }
         .campaign-btn:hover { background-color: var(--brand-primary); border-color: var(--brand-primary); color: #ffffff; box-shadow: 0 0 10px rgba(249, 115, 22, 0.2); }
 
         .empty-state { background-color: var(--bg-surface); border: 1px dashed var(--border); border-radius: var(--radius-lg); padding: 40px; text-align: center; color: var(--text-muted); font-size: 0.95rem; }
-        ::-webkit-scrollbar { width: 8px; }
+        
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: var(--bg-base); }
         ::-webkit-scrollbar-thumb { background: var(--bg-hover); border-radius: 4px; }
+
+        /* ==========================================================================
+           📱 ADAPTAÇÃO PARA TABLETS (Ecrãs até 1024px)
+           ========================================================================== */
+        @media (max-width: 1024px) {
+            .main-content { padding: 32px 24px; }
+            .cards-grid { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+            .sidebar { width: 220px; padding: 20px; }
+        }
+
+        /* ==========================================================================
+           📱 ADAPTAÇÃO PARA TELEMÓVEIS (Ecrãs até 768px)
+           ========================================================================== */
+        @media (max-width: 768px) {
+            body { flex-direction: column; height: auto; overflow: auto; }
+            
+            /* Transforma a sidebar num menu de topo horizontal fixo ou fluido */
+            .sidebar { 
+                width: 100%; 
+                height: auto; 
+                flex-direction: row; 
+                justify-content: space-between; 
+                align-items: center; 
+                padding: 12px 20px; 
+                border-right: none; 
+                border-bottom: 1px solid var(--border);
+                position: sticky;
+                top: 0;
+                background-color: var(--bg-surface);
+            }
+            
+            .logo { margin-bottom: 0; font-size: 1.1rem; gap: 8px; }
+            .logo-icon { width: 28px; height: 28px; font-size: 1rem; }
+            
+            .nav-menu { flex-direction: row; gap: 6px; }
+            .nav-item { padding: 8px 12px; font-size: 0.85rem; gap: 6px; }
+            /* Oculte o texto do botão recarregar em ecrãs muito pequenos para não amassar o menu */
+            .nav-item span { display: inline-block; }
+
+            .main-content { padding: 24px 16px; overflow-y: visible; }
+            .header { margin-bottom: 24px; }
+            .header h1 { font-size: 1.5rem; }
+            
+            /* Estatísticas em coluna única ou dupla compacta */
+            .stats-grid { grid-template-columns: 1fr; gap: 12px; margin-bottom: 28px; }
+            .stat-card { padding: 16px; }
+            .stat-value { font-size: 1.6rem; }
+
+            /* Campanhas em lista linear vertical de ecrã inteiro */
+            .category-header { margin-bottom: 14px; }
+            .category-title { font-size: 1.1rem; }
+            .cards-grid { grid-template-columns: 1fr; gap: 12px; }
+            
+            .music-card { min-height: auto; padding: 16px; }
+            .music-title { font-size: 0.95rem; margin-bottom: 12px; }
+            
+            /* Tornar botões mais fáceis de carregar com o dedo (Touch friendly) */
+            .campaign-btn { padding: 10px 16px; font-size: 0.85rem; }
+        }
+
+        @media (max-width: 400px) {
+            /* Esconde o texto do botão recarregar em telemóveis minúsculos para caber tudo */
+            .nav-item:not(.active) span { display: none; }
+        }
     </style>
 </head>
 <body>
@@ -96,12 +181,12 @@
         <div class="logo"><div class="logo-icon">🎵</div>Duetti App</div>
         <nav class="nav-menu">
             <div class="nav-item active">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
-                Dashboard
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                <span>Dashboard</span>
             </div>
             <div class="nav-item" onclick="triggerFetchAnimation()">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2v6h-6"></path><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v6h6"></path></svg>
-                Recarregar Dados
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2v6h-6"></path><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v6h6"></path></svg>
+                <span>Recarregar</span>
             </div>
         </nav>
     </aside>
@@ -166,7 +251,6 @@
                 if (hasCampaigns) {
                     htmlContent += `<div class="cards-grid">`;
                     categoria.musicas.forEach(musica => {
-                        // LEITURA DO LINK DA CATEGORIA DO DATA.JS
                         htmlContent += `
                             <div class="music-card">
                                 <div class="music-title">${musica.musica}</div>
@@ -194,7 +278,7 @@
             statsContainer.innerHTML = `
                 <div class="stat-card"><div class="stat-title">Total de Campanhas</div><div class="stat-value" style="color: var(--brand-primary);">${totalCampaigns}</div></div>
                 <div class="stat-card"><div class="stat-title">Categorias Ativas</div><div class="stat-value">${activeCategories} <span style="font-size:1rem; color:var(--text-muted); font-weight:normal;">/ ${scrapingData.length}</span></div></div>
-                <div class="stat-card"><div class="stat-title">Sincronizado via Vercel</div><div class="stat-value" style="font-size: 1.4rem; margin-top:8px; color: var(--success-text)">${new Date().toLocaleTimeString('pt-PT', {hour: '2-digit', minute:'2-digit', second:'2-digit'})}</div></div>
+                <div class="stat-card"><div class="stat-title">Sincronizado via Vercel</div><div class="stat-value" style="font-size: 1.2rem; margin-top:8px; color: var(--success-text)">${new Date().toLocaleTimeString('pt-PT', {hour: '2-digit', minute:'2-digit', second:'2-digit'})}</div></div>
             `;
         }
 
